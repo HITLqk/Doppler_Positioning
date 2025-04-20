@@ -1,0 +1,725 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>untitled_deepseek_try</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2025-04-20">
+<meta name="DC.source" content="untitled_deepseek_try.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#2">========== 1. 参数与常量定义 ==========</a>
+</li>
+<li>
+<a href="#3">========== 2. 接收机状态设定 ==========</a>
+</li>
+<li>
+<a href="#4">========== 3. 卫星数据输入与转换 ==========</a>
+</li>
+<li>
+<a href="#5">========== 4. 根据简化多普勒公式生成观测值 ==========</a>
+</li>
+<li>
+<a href="#6">========== 5. 生成多普勒方程与牛顿法迭代求解 ==========</a>
+</li>
+<li>
+<a href="#7">========== 6. 结果转换输出 ==========</a>
+</li>
+<li>
+<a href="#8">========== 函数：多普勒残差计算 ==========</a>
+</li>
+<li>
+<a href="#9">========== 函数：雅可比矩阵计算 ==========</a>
+</li>
+<li>
+<a href="#10">========== 函数：牛顿迭代 ==========</a>
+</li>
+<li>
+<a href="#11">========== 辅助函数：地理坐标转ECEF ==========</a>
+</li>
+<li>
+<a href="#12">========== 辅助函数：ECEF转地理坐标 ==========</a>
+</li>
+<li>
+<a href="#13">========== 辅助函数：地理速度转ECEF速度 ==========</a>
+</li>
+</ul>
+</div>
+<pre class="codeinput">
+<span class="comment">%function demoDopplerGroundReceiverNewSatData_GeodeticOutput()</span>
+</pre>
+<h2 id="2">========== 1. 参数与常量定义 ==========</h2>
+<pre class="codeinput">    clear; clc;
+
+    <span class="comment">% WGS-84参数</span>
+    a = 6378137;                     <span class="comment">% 长半轴 [m]</span>
+    f = 1/298.257223563;             <span class="comment">% 扁率</span>
+    e2 = 2*f - f^2;                  <span class="comment">% 第一偏心率平方</span>
+
+    <span class="comment">% 常量</span>
+    c = 3e8;                         <span class="comment">% 光速 [m/s]</span>
+    lambda = 0.19029367;              <span class="comment">% 载波波长 (例如GPS L1) [m]</span>
+</pre>
+<h2 id="3">========== 2. 接收机状态设定 ==========</h2>
+<p>地面接收机地理坐标: lat = 45.75 deg, lon = 126.65 deg, alt = 0 km</p>
+<pre class="codeinput">    lat_rec_deg = 50.754236;
+    lon_rec_deg = 137.615124;
+    alt_rec_km  = 50.241;
+    lat_rec_deg_rate = 0.00005;
+    lon_rec_deg_rate = 0.00004;
+    alt_rec_km_rate  = 0.00001;
+
+
+    lat_rec_deg_guess = 52;
+    lon_rec_deg_guess = 138;
+    alt_rec_km_guess  = 0;
+    lat_rec_deg_rate_guess = 0;
+    lon_rec_deg_rate_guess = 0;
+    alt_rec_km_rate_guess  = 0;
+
+
+    <span class="comment">% 转换为弧度和米</span>
+    lat_rec = deg2rad(lat_rec_deg);
+    lon_rec = deg2rad(lon_rec_deg);
+    alt_rec = alt_rec_km * 1000;  <span class="comment">% [m]</span>
+
+    lat_rec_guess = deg2rad(lat_rec_deg_guess);
+    lon_rec_guess = deg2rad(lon_rec_deg_guess);
+    alt_rec_guess = alt_rec_km_guess * 1000;  <span class="comment">% [m]</span>
+
+    lat_rec_rate = deg2rad(lat_rec_deg_rate);
+    lon_rec_rate = deg2rad(lon_rec_deg_rate);
+    alt_rec_rate = alt_rec_km_rate * 1000;  <span class="comment">% [m]</span>
+
+    lat_rec_rate_guess = deg2rad(lat_rec_deg_rate_guess);
+    lon_rec_rate_guess = deg2rad(lon_rec_deg_rate_guess);
+    alt_rec_rate_guess = alt_rec_km_rate_guess * 1000;  <span class="comment">% [m]</span>
+
+
+    <span class="comment">% 计算接收机ECEF位置</span>
+    r_true = geodetic2ecef(lat_rec, lon_rec, alt_rec, a, e2);
+    r_guess = geodetic2ecef(lat_rec_guess, lon_rec_guess, alt_rec_guess, a, e2);
+    <span class="comment">% 接收机速度：设为零（静止）</span>
+    v_true = geodeticRates2ecef(lat_rec, lon_rec, alt_rec, lat_rec_rate, lon_rec_rate, alt_rec_rate, a, e2);
+    v_guess = geodeticRates2ecef(lat_rec_guess, lon_rec_guess, alt_rec_guess, lat_rec_rate_guess, lon_rec_rate_guess, alt_rec_rate_guess, a, e2);
+    <span class="comment">% 初始钟偏 (s)</span>
+    deltaR_true = 1e-8;
+    <span class="comment">% 假设接收机钟偏率 (dδ_R/dt)</span>
+    dDeltaRdt_true = 1e-8;  <span class="comment">% [s/s]</span>
+
+    <span class="comment">% 删除原来的状态向量定义中的deltaR，改为7维</span>
+    x_true = [r_true; v_true; dDeltaRdt_true]; <span class="comment">% 7维状态向量 [r; v; dDeltaRdt]</span>
+    <span class="comment">% 初始猜测x0也调整为7维</span>
+    x_guess = [r_guess; v_guess; dDeltaRdt_true];  <span class="comment">% 初始钟差率猜测</span>
+    x0 = x_guess;
+</pre>
+<h2 id="4">========== 3. 卫星数据输入与转换 ==========</h2>
+<p>卫星数据: 每行: [Lat(deg), Lon(deg), Alt(km), LatRate(deg/s), LonRate(deg/s), AltRate(km/s)]</p>
+<pre class="codeinput">    satData = [<span class="keyword">...</span>
+        51.979,   93.150,  552.679853,   0.014623,   0.094727,   0.002798;  <span class="comment">% STARLINK-1008_44714</span>
+        43.716,  105.748,  551.083427,   0.035137,   0.067749,   0.007329;  <span class="comment">% STARLINK-1039_44744</span>
+        37.589,  115.247,  549.894428,   0.041150,   0.055722,   0.007486;  <span class="comment">% STARLINK-1193_45100</span>
+        23.995,  120.646,  547.522829,  -0.047565,   0.040975,  -0.004785;  <span class="comment">% STARLINK-1582_46043</span>
+        31.153,  133.213,  548.216734,  -0.044950,   0.047234,  -0.006859;  <span class="comment">% STARLINK-1292_45394</span>
+        37.890,  144.494,  549.371205,  -0.040929,   0.056219,  -0.007745;  <span class="comment">% STARLINK-1300_45374</span>
+        48.505,  135.964,  346.164370,   0.028053,   0.085285,   0.006675;  <span class="comment">% STARLINK-1170_45073</span>
+        <span class="comment">% 52.683,  139.925,  430.119274,  -0.009879,   0.100688,  -0.002644</span>
+    ]; <span class="comment">% STARLINK-1474_45738</span>
+
+    lat_deg = satData(:,1);
+    lon_deg = satData(:,2);
+    alt_km  = satData(:,3);
+    latRate_degPerSec = satData(:,4);
+    lonRate_degPerSec = satData(:,5);
+    altRate_kmPerSec  = satData(:,6);
+
+    <span class="comment">% 单位转换: 纬度和经度转换为弧度；alt从 km 转为 m</span>
+    lat_rad = deg2rad(lat_deg);
+    lon_rad = deg2rad(lon_deg);
+    alt_m = alt_km * 1000;
+    latRate_radPerSec = deg2rad(latRate_degPerSec);
+    lonRate_radPerSec = deg2rad(lonRate_degPerSec);
+    altRate_mPerSec   = altRate_kmPerSec * 1000;
+
+    nSat = size(satData,1);
+    <span class="comment">% 卫星钟偏率：取0 (简化)</span>
+    dot_delta_sat = zeros(nSat,1);
+    r_sat = zeros(3, nSat);
+    v_sat = zeros(3, nSat);
+    <span class="keyword">for</span> j = 1:nSat
+        r_sat(:,j) = geodetic2ecef(lat_rad(j), lon_rad(j), alt_m(j), a, e2);
+        v_sat(:,j) = geodeticRates2ecef(lat_rad(j), lon_rad(j), alt_m(j), <span class="keyword">...</span>
+                                         latRate_radPerSec(j), lonRate_radPerSec(j), altRate_mPerSec(j), a, e2);
+    <span class="keyword">end</span>
+</pre>
+<h2 id="5">========== 4. 根据简化多普勒公式生成观测值 ==========</h2>
+<p>对于第 j 颗卫星： f_j(x_true) = hat_rho_j'*(v_true - v_sat(:,j)) + c*dDeltaRdt_true - c*dot_delta_sat(j) + lambda*D_j = 0 故： D_j = -[hat_rho_j'*(v_true - v_sat(:,j)) + c*dDeltaRdt_true - c*dot_delta_sat(j)]/lambda</p>
+<pre class="codeinput">    doppler_meas = zeros(nSat,1);
+    <span class="keyword">for</span> j = 1:nSat
+        d_vec = x_true(1:3) - r_sat(:,j);
+        norm_d = norm(d_vec);
+        hat_rho = d_vec / norm_d;
+        relative_v = x_true(4:6) - v_sat(:,j);
+        term = hat_rho' * relative_v + c*x_true(7) - c*dot_delta_sat(j);
+        doppler_meas(j) = - term / lambda;
+    <span class="keyword">end</span>
+
+    fprintf(<span class="string">'生成的多普勒测量值 (Hz):\n'</span>);
+    disp(doppler_meas);
+</pre>
+<pre class="codeoutput">生成的多普勒测量值 (Hz):
+   1.0e+04 *
+
+    3.5369
+    3.5293
+    3.5413
+   -1.7567
+   -2.2723
+   -3.0685
+    2.0547
+
+</pre>
+<h2 id="6">========== 5. 生成多普勒方程与牛顿法迭代求解 ==========</h2>
+<pre class="codeinput">    D = doppler_meas;
+    maxIter = 50; tol = 1e-8;
+    x = x0;
+    [x_est, iter, err_hist] = newtonIteration7(x0, r_sat, v_sat, doppler_meas, dot_delta_sat, c, lambda, maxIter, tol);
+</pre>
+<h2 id="7">========== 6. 结果转换输出 ==========</h2>
+<p>将初始猜测和最终估计的接收机位置转换为地理坐标</p>
+<pre class="codeinput">    [lat_est, lon_est, alt_est] = ecef2geodetic(x_est(1:3), a, e2);
+
+
+    fprintf(<span class="string">'真实位置 (geodetic: lat[deg],lon[deg],alt[km]):\n'</span>);
+    fprintf(<span class="string">'  Lat = %.6f deg, Lon = %.6f deg, Alt = %.3f km\n'</span>, lat_rec_deg, lon_rec_deg, alt_rec/1000);
+    fprintf(<span class="string">'初始猜测位置 (geodetic):\n'</span>);
+    fprintf(<span class="string">'  Lat = %.6f deg, Lon = %.6f deg, Alt = %.3f km\n'</span>, lat_rec_deg_guess, lon_rec_deg_guess, alt_rec_guess/1000);
+    fprintf(<span class="string">'最终估计位置 (geodetic):\n'</span>);
+    fprintf(<span class="string">'  Lat = %.6f deg, Lon = %.6f deg, Alt = %.3f km\n'</span>, lat_est, lon_est, alt_est/1000);
+
+
+    fprintf(<span class="string">'真实速度 (ECEF):\n'</span>);
+    fprintf(<span class="string">'  x = %.6f m/s, y = %.6f m/s, z = %.6f m/s\n'</span>, x_true(4), x_true(5), x_true(6));
+    fprintf(<span class="string">'初始猜测速度 (ECEF):\n'</span>);
+    fprintf(<span class="string">'  x = %.6f m/s, y = %.6f m/s, z = %.6f m/s\n'</span>, x_guess(4), x_guess(5), x_guess(6));
+    fprintf(<span class="string">'最终估计速度 (ECEF):\n'</span>);
+    fprintf(<span class="string">'  x = %.6f m/s, y = %.6f m/s, z = %.6f m/s\n'</span>, x_est(4), x_est(5), x_est(6));
+
+    fprintf(<span class="string">'最终残差 norm: %e\n'</span>, norm(dopplerResidual7(x_est, r_sat, v_sat, doppler_meas, dot_delta_sat, c, lambda)));
+
+    figure;
+    plot(err_hist(1:iter),<span class="string">'-o'</span>);
+    xlabel(<span class="string">'迭代次数'</span>);
+    ylabel(<span class="string">'状态增量范数'</span>);
+    title(<span class="string">'牛顿迭代收敛情况'</span>);
+</pre>
+<pre class="codeoutput">真实位置 (geodetic: lat[deg],lon[deg],alt[km]):
+  Lat = 50.754236 deg, Lon = 137.615124 deg, Alt = 50.241 km
+初始猜测位置 (geodetic):
+  Lat = 52.000000 deg, Lon = 138.000000 deg, Alt = 0.000 km
+最终估计位置 (geodetic):
+  Lat = 50.754236 deg, Lon = 137.615124 deg, Alt = 50.241 km
+真实速度 (ECEF):
+  x = 1.284350 m/s, y = -5.023731 m/s, z = 3.554383 m/s
+初始猜测速度 (ECEF):
+  x = 0.000000 m/s, y = 0.000000 m/s, z = 0.000000 m/s
+最终估计速度 (ECEF):
+  x = 1.284350 m/s, y = -5.023731 m/s, z = 3.554383 m/s
+</pre>
+<h2 id="8">========== 函数：多普勒残差计算 ==========</h2>
+<pre class="codeinput">
+<span class="keyword">function</span> f = dopplerResidual7(x, r_sat, v_sat, D, dot_delta_sat, c, lambda)
+    nSat = size(r_sat,2);
+    f = zeros(nSat,1);
+    r = x(1:3);
+    v = x(4:6);
+    dDeltaRdt = x(7);
+    <span class="keyword">for</span> j = 1:nSat
+        d_vec = r - r_sat(:,j);
+        norm_d = norm(d_vec);
+        hat_rho = d_vec / norm_d;
+        relative_v = v - v_sat(:,j);
+        f(j) = hat_rho' * relative_v + c*dDeltaRdt - c*dot_delta_sat(j) + lambda*D(j);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre>
+<pre class="codeoutput">迭代收敛，共迭代 5 次。
+</pre>
+<h2 id="9">========== 函数：雅可比矩阵计算 ==========</h2>
+<p>启用正确的7维雅可比函数</p>
+<pre class="codeinput">
+<span class="keyword">function</span> J = dopplerJacobian7(x, r_sat, v_sat, ~, c, ~)
+    nSat = size(r_sat,2);
+    J = zeros(nSat,7);
+    r = x(1:3);
+    v = x(4:6);
+    <span class="keyword">for</span> j = 1:nSat
+        d_vec = r - r_sat(:,j);
+        norm_d = norm(d_vec);
+        hat_rho = d_vec / norm_d;
+        dHat_dr = (eye(3)/norm_d) - (d_vec*d_vec')/(norm_d^3);
+        J(j,1:3) = (dHat_dr*(v - v_sat(:,j)))';
+        J(j,4:6) = hat_rho';
+        J(j,7) = c;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre>
+<h2 id="10">========== 函数：牛顿迭代 ==========</h2>
+<pre class="codeinput">
+<span class="keyword">function</span> [ x, iters, err_hist] = newtonIteration7(x0, r_sat, v_sat, D, dot_delta_sat, c, lambda, maxIter, tol)
+    x = x0;
+    err_hist = zeros(maxIter,1);
+    <span class="keyword">for</span> k = 1:maxIter
+        f_vec = dopplerResidual7(x, r_sat, v_sat, D, dot_delta_sat, c, lambda);
+        <span class="keyword">if</span> norm(f_vec) &lt; tol
+            fprintf(<span class="string">'迭代收敛，共迭代 %d 次。\n'</span>, k);
+            <span class="keyword">break</span>;
+        <span class="keyword">end</span>
+        J = dopplerJacobian7(x, r_sat, v_sat, dot_delta_sat, c, lambda);
+        dx = - (J \ f_vec);
+        <span class="comment">% dx = dx';</span>
+        x = x + dx;
+        [lat, lon, alt] = ecef2geodetic(x(1:3), 6378137, 1/298.257223563);
+        fprintf(<span class="string">'  Lat = %.6f deg, Lon = %.6f deg, Alt = %.3f km\n'</span>, lat, lon, alt/1000);
+        err_hist(k) = norm(dx);
+    <span class="keyword">end</span>
+    iters = k;
+    err_hist = err_hist(1:iters);
+<span class="keyword">end</span>
+</pre>
+<h2 id="11">========== 辅助函数：地理坐标转ECEF ==========</h2>
+<pre class="codeinput">
+<span class="keyword">function</span> r_ecef = geodetic2ecef(lat, lon, alt, a, e2)
+    <span class="comment">% 将地理坐标 (lat, lon, alt) 转换为ECEF (WGS-84)</span>
+    <span class="comment">% lat, lon: 弧度制, alt: m</span>
+    N = a ./ sqrt(1 - e2*sin(lat).^2);
+    x = (N + alt).*cos(lat).*cos(lon);
+    y = (N + alt).*cos(lat).*sin(lon);
+    z = ((1 - e2)*N + alt).*sin(lat);
+    r_ecef = [x; y; z];
+<span class="keyword">end</span>
+</pre>
+<h2 id="12">========== 辅助函数：ECEF转地理坐标 ==========</h2>
+<pre class="codeinput">
+<span class="keyword">function</span> [lat, lon, alt] = ecef2geodetic(r, a, e2)
+    <span class="comment">% ecef2geodetic: 将ECEF坐标转换为WGS-84地理坐标 (lat, lon, alt)</span>
+    <span class="comment">% 输入：</span>
+    <span class="comment">%   r: 3x1向量 [x; y; z] (m)</span>
+    <span class="comment">%   a: 长半轴 (m)</span>
+    <span class="comment">%   f: 扁率</span>
+    <span class="comment">% 输出：</span>
+    <span class="comment">%   lat, lon: 单位为度, alt: 单位为 m</span>
+    x = r(1); y = r(2); z = r(3);
+    lon = atan2(y, x);
+    p = sqrt(x.^2 + y.^2);
+    <span class="comment">% 初始纬度估计</span>
+    lat = atan2(z, p*(1 - e2));
+    lat0 = 0;
+    <span class="comment">% 迭代求解</span>
+    <span class="keyword">while</span> abs(lat - lat0) &gt; 1e-12
+        lat0 = lat;
+        N = a / sqrt(1 - e2*sin(lat)^2);
+        alt = p / cos(lat) - N;
+        lat = atan2(z, p*(1 - e2*(N/(N+alt))));
+    <span class="keyword">end</span>
+    <span class="comment">% 转为度</span>
+    lat = rad2deg(lat);
+    lon = rad2deg(lon);
+<span class="keyword">end</span>
+</pre>
+<pre class="codeoutput">  Lat = 50.559279 deg, Lon = 137.563239 deg, Alt = 41.156 km
+  Lat = 50.659185 deg, Lon = 137.613590 deg, Alt = 43.644 km
+  Lat = 50.660758 deg, Lon = 137.615124 deg, Alt = 43.849 km
+  Lat = 50.660759 deg, Lon = 137.615124 deg, Alt = 43.849 km
+</pre>
+<h2 id="13">========== 辅助函数：地理速度转ECEF速度 ==========</h2>
+<pre class="codeinput">
+<span class="keyword">function</span> v_ecef = geodeticRates2ecef(lat, lon, alt, latRate, lonRate, altRate, a, e2)
+    <span class="comment">% 将地理速率转换为ECEF速度 (m/s)</span>
+    N = a/sqrt(1 - e2*sin(lat)^2);
+    dN_dlat = a*e2*sin(lat)*cos(lat)/( (1 - e2*sin(lat)^2)^(3/2) );
+
+    dx_dlat = dN_dlat*cos(lat)*cos(lon) - (N+alt)*sin(lat)*cos(lon);
+    dx_dlon = -(N+alt)*cos(lat)*sin(lon);
+    dx_dalt = cos(lat)*cos(lon);
+
+    dy_dlat = dN_dlat*cos(lat)*sin(lon) - (N+alt)*sin(lat)*sin(lon);
+    dy_dlon = (N+alt)*cos(lat)*cos(lon);
+    dy_dalt = cos(lat)*sin(lon);
+
+    dz_dlat = (1-e2)*dN_dlat*sin(lat) + ((1-e2)*N+alt)*cos(lat);
+    dz_dlon = 0;
+    dz_dalt = sin(lat);
+
+    vx = dx_dlat*latRate + dx_dlon*lonRate + dx_dalt*altRate;
+    vy = dy_dlat*latRate + dy_dlon*lonRate + dy_dalt*altRate;
+    vz = dz_dlat*latRate + dz_dlon*lonRate + dz_dalt*altRate;
+    v_ecef = [vx; vy; vz];
+<span class="keyword">end</span>
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+%function demoDopplerGroundReceiverNewSatData_GeodeticOutput()
+    %% ========== 1. 参数与常量定义 ==========
+    clear; clc;
+    
+    % WGS-84参数
+    a = 6378137;                     % 长半轴 [m]
+    f = 1/298.257223563;             % 扁率
+    e2 = 2*f - f^2;                  % 第一偏心率平方
+    
+    % 常量
+    c = 3e8;                         % 光速 [m/s]
+    lambda = 0.19029367;              % 载波波长 (例如GPS L1) [m]
+    
+    %% ========== 2. 接收机状态设定 ==========
+    % 地面接收机地理坐标: lat = 45.75 deg, lon = 126.65 deg, alt = 0 km
+    lat_rec_deg = 50.754236;
+    lon_rec_deg = 137.615124;
+    alt_rec_km  = 50.241;
+    lat_rec_deg_rate = 0.00005;
+    lon_rec_deg_rate = 0.00004;
+    alt_rec_km_rate  = 0.00001;
+    
+    
+    lat_rec_deg_guess = 52;
+    lon_rec_deg_guess = 138;
+    alt_rec_km_guess  = 0;
+    lat_rec_deg_rate_guess = 0;
+    lon_rec_deg_rate_guess = 0;
+    alt_rec_km_rate_guess  = 0;
+    
+    
+    % 转换为弧度和米
+    lat_rec = deg2rad(lat_rec_deg);
+    lon_rec = deg2rad(lon_rec_deg);
+    alt_rec = alt_rec_km * 1000;  % [m]
+    
+    lat_rec_guess = deg2rad(lat_rec_deg_guess);
+    lon_rec_guess = deg2rad(lon_rec_deg_guess);
+    alt_rec_guess = alt_rec_km_guess * 1000;  % [m]
+    
+    lat_rec_rate = deg2rad(lat_rec_deg_rate);
+    lon_rec_rate = deg2rad(lon_rec_deg_rate);
+    alt_rec_rate = alt_rec_km_rate * 1000;  % [m]
+    
+    lat_rec_rate_guess = deg2rad(lat_rec_deg_rate_guess);
+    lon_rec_rate_guess = deg2rad(lon_rec_deg_rate_guess);
+    alt_rec_rate_guess = alt_rec_km_rate_guess * 1000;  % [m]
+    
+    
+    % 计算接收机ECEF位置
+    r_true = geodetic2ecef(lat_rec, lon_rec, alt_rec, a, e2);
+    r_guess = geodetic2ecef(lat_rec_guess, lon_rec_guess, alt_rec_guess, a, e2);
+    % 接收机速度：设为零（静止）
+    v_true = geodeticRates2ecef(lat_rec, lon_rec, alt_rec, lat_rec_rate, lon_rec_rate, alt_rec_rate, a, e2);
+    v_guess = geodeticRates2ecef(lat_rec_guess, lon_rec_guess, alt_rec_guess, lat_rec_rate_guess, lon_rec_rate_guess, alt_rec_rate_guess, a, e2);
+    % 初始钟偏 (s)
+    deltaR_true = 1e-8;
+    % 假设接收机钟偏率 (dδ_R/dt)
+    dDeltaRdt_true = 1e-8;  % [s/s]
+    
+    % 删除原来的状态向量定义中的deltaR，改为7维
+    x_true = [r_true; v_true; dDeltaRdt_true]; % 7维状态向量 [r; v; dDeltaRdt]
+    % 初始猜测x0也调整为7维
+    x_guess = [r_guess; v_guess; dDeltaRdt_true];  % 初始钟差率猜测
+    x0 = x_guess;
+    
+    
+    %% ========== 3. 卫星数据输入与转换 ==========
+    % 卫星数据: 每行: [Lat(deg), Lon(deg), Alt(km), LatRate(deg/s), LonRate(deg/s), AltRate(km/s)]
+    satData = [...
+        51.979,   93.150,  552.679853,   0.014623,   0.094727,   0.002798;  % STARLINK-1008_44714
+        43.716,  105.748,  551.083427,   0.035137,   0.067749,   0.007329;  % STARLINK-1039_44744
+        37.589,  115.247,  549.894428,   0.041150,   0.055722,   0.007486;  % STARLINK-1193_45100
+        23.995,  120.646,  547.522829,  -0.047565,   0.040975,  -0.004785;  % STARLINK-1582_46043
+        31.153,  133.213,  548.216734,  -0.044950,   0.047234,  -0.006859;  % STARLINK-1292_45394
+        37.890,  144.494,  549.371205,  -0.040929,   0.056219,  -0.007745;  % STARLINK-1300_45374
+        48.505,  135.964,  346.164370,   0.028053,   0.085285,   0.006675;  % STARLINK-1170_45073
+        % 52.683,  139.925,  430.119274,  -0.009879,   0.100688,  -0.002644
+    ]; % STARLINK-1474_45738
+    
+    lat_deg = satData(:,1);
+    lon_deg = satData(:,2);
+    alt_km  = satData(:,3);
+    latRate_degPerSec = satData(:,4);
+    lonRate_degPerSec = satData(:,5);
+    altRate_kmPerSec  = satData(:,6);
+    
+    % 单位转换: 纬度和经度转换为弧度；alt从 km 转为 m
+    lat_rad = deg2rad(lat_deg);
+    lon_rad = deg2rad(lon_deg);
+    alt_m = alt_km * 1000;
+    latRate_radPerSec = deg2rad(latRate_degPerSec);
+    lonRate_radPerSec = deg2rad(lonRate_degPerSec);
+    altRate_mPerSec   = altRate_kmPerSec * 1000;
+    
+    nSat = size(satData,1);
+    % 卫星钟偏率：取0 (简化)
+    dot_delta_sat = zeros(nSat,1);
+    r_sat = zeros(3, nSat);
+    v_sat = zeros(3, nSat);
+    for j = 1:nSat
+        r_sat(:,j) = geodetic2ecef(lat_rad(j), lon_rad(j), alt_m(j), a, e2);
+        v_sat(:,j) = geodeticRates2ecef(lat_rad(j), lon_rad(j), alt_m(j), ...
+                                         latRate_radPerSec(j), lonRate_radPerSec(j), altRate_mPerSec(j), a, e2);
+    end
+    
+    
+    %% ========== 4. 根据简化多普勒公式生成观测值 ==========
+    % 对于第 j 颗卫星：
+    % f_j(x_true) = hat_rho_j'*(v_true - v_sat(:,j)) + c*dDeltaRdt_true - c*dot_delta_sat(j) + lambda*D_j = 0
+    % 故：
+    % D_j = -[hat_rho_j'*(v_true - v_sat(:,j)) + c*dDeltaRdt_true - c*dot_delta_sat(j)]/lambda
+    doppler_meas = zeros(nSat,1);
+    for j = 1:nSat
+        d_vec = x_true(1:3) - r_sat(:,j);
+        norm_d = norm(d_vec);
+        hat_rho = d_vec / norm_d;
+        relative_v = x_true(4:6) - v_sat(:,j);
+        term = hat_rho' * relative_v + c*x_true(7) - c*dot_delta_sat(j);
+        doppler_meas(j) = - term / lambda;
+    end
+    
+    fprintf('生成的多普勒测量值 (Hz):\n');
+    disp(doppler_meas);
+    
+    
+    %% ========== 5. 生成多普勒方程与牛顿法迭代求解 ==========
+    
+    D = doppler_meas;
+    maxIter = 50; tol = 1e-8;
+    x = x0;
+    [x_est, iter, err_hist] = newtonIteration7(x0, r_sat, v_sat, doppler_meas, dot_delta_sat, c, lambda, maxIter, tol);
+    
+    
+    %% ========== 6. 结果转换输出 ==========
+    % 将初始猜测和最终估计的接收机位置转换为地理坐标
+    [lat_est, lon_est, alt_est] = ecef2geodetic(x_est(1:3), a, e2);
+    
+    
+    fprintf('真实位置 (geodetic: lat[deg],lon[deg],alt[km]):\n');
+    fprintf('  Lat = %.6f deg, Lon = %.6f deg, Alt = %.3f km\n', lat_rec_deg, lon_rec_deg, alt_rec/1000);
+    fprintf('初始猜测位置 (geodetic):\n');
+    fprintf('  Lat = %.6f deg, Lon = %.6f deg, Alt = %.3f km\n', lat_rec_deg_guess, lon_rec_deg_guess, alt_rec_guess/1000);
+    fprintf('最终估计位置 (geodetic):\n');
+    fprintf('  Lat = %.6f deg, Lon = %.6f deg, Alt = %.3f km\n', lat_est, lon_est, alt_est/1000);
+    
+    
+    fprintf('真实速度 (ECEF):\n');
+    fprintf('  x = %.6f m/s, y = %.6f m/s, z = %.6f m/s\n', x_true(4), x_true(5), x_true(6));
+    fprintf('初始猜测速度 (ECEF):\n');
+    fprintf('  x = %.6f m/s, y = %.6f m/s, z = %.6f m/s\n', x_guess(4), x_guess(5), x_guess(6));
+    fprintf('最终估计速度 (ECEF):\n');
+    fprintf('  x = %.6f m/s, y = %.6f m/s, z = %.6f m/s\n', x_est(4), x_est(5), x_est(6));
+    
+    fprintf('最终残差 norm: %e\n', norm(dopplerResidual7(x_est, r_sat, v_sat, doppler_meas, dot_delta_sat, c, lambda)));
+    
+    figure;
+    plot(err_hist(1:iter),'-o');
+    xlabel('迭代次数');
+    ylabel('状态增量范数');
+    title('牛顿迭代收敛情况');
+    
+    
+    
+%% ========== 函数：多普勒残差计算 ==========
+function f = dopplerResidual7(x, r_sat, v_sat, D, dot_delta_sat, c, lambda)
+    nSat = size(r_sat,2);
+    f = zeros(nSat,1);
+    r = x(1:3);
+    v = x(4:6);
+    dDeltaRdt = x(7);
+    for j = 1:nSat
+        d_vec = r - r_sat(:,j);
+        norm_d = norm(d_vec);
+        hat_rho = d_vec / norm_d;
+        relative_v = v - v_sat(:,j);
+        f(j) = hat_rho' * relative_v + c*dDeltaRdt - c*dot_delta_sat(j) + lambda*D(j);
+    end
+end
+%% ========== 函数：雅可比矩阵计算 ==========
+% 启用正确的7维雅可比函数
+function J = dopplerJacobian7(x, r_sat, v_sat, ~, c, ~)
+    nSat = size(r_sat,2);
+    J = zeros(nSat,7);
+    r = x(1:3);
+    v = x(4:6);
+    for j = 1:nSat
+        d_vec = r - r_sat(:,j);
+        norm_d = norm(d_vec);
+        hat_rho = d_vec / norm_d;
+        dHat_dr = (eye(3)/norm_d) - (d_vec*d_vec')/(norm_d^3);
+        J(j,1:3) = (dHat_dr*(v - v_sat(:,j)))';
+        J(j,4:6) = hat_rho';
+        J(j,7) = c;
+    end
+end
+
+%% ========== 函数：牛顿迭代 ==========
+function [ x, iters, err_hist] = newtonIteration7(x0, r_sat, v_sat, D, dot_delta_sat, c, lambda, maxIter, tol)
+    x = x0;
+    err_hist = zeros(maxIter,1);
+    for k = 1:maxIter
+        f_vec = dopplerResidual7(x, r_sat, v_sat, D, dot_delta_sat, c, lambda);
+        if norm(f_vec) < tol
+            fprintf('迭代收敛，共迭代 %d 次。\n', k);
+            break;
+        end
+        J = dopplerJacobian7(x, r_sat, v_sat, dot_delta_sat, c, lambda);
+        dx = - (J \ f_vec);
+        % dx = dx';
+        x = x + dx;
+        [lat, lon, alt] = ecef2geodetic(x(1:3), 6378137, 1/298.257223563);
+        fprintf('  Lat = %.6f deg, Lon = %.6f deg, Alt = %.3f km\n', lat, lon, alt/1000);
+        err_hist(k) = norm(dx);
+    end
+    iters = k;
+    err_hist = err_hist(1:iters);
+end
+
+
+
+
+%% ========== 辅助函数：地理坐标转ECEF ==========
+function r_ecef = geodetic2ecef(lat, lon, alt, a, e2)
+    % 将地理坐标 (lat, lon, alt) 转换为ECEF (WGS-84)
+    % lat, lon: 弧度制, alt: m
+    N = a ./ sqrt(1 - e2*sin(lat).^2);
+    x = (N + alt).*cos(lat).*cos(lon);
+    y = (N + alt).*cos(lat).*sin(lon);
+    z = ((1 - e2)*N + alt).*sin(lat);
+    r_ecef = [x; y; z];
+end
+%% ========== 辅助函数：ECEF转地理坐标 ==========
+function [lat, lon, alt] = ecef2geodetic(r, a, e2)
+    % ecef2geodetic: 将ECEF坐标转换为WGS-84地理坐标 (lat, lon, alt)
+    % 输入：
+    %   r: 3x1向量 [x; y; z] (m)
+    %   a: 长半轴 (m)
+    %   f: 扁率
+    % 输出：
+    %   lat, lon: 单位为度, alt: 单位为 m
+    x = r(1); y = r(2); z = r(3);
+    lon = atan2(y, x);
+    p = sqrt(x.^2 + y.^2);
+    % 初始纬度估计
+    lat = atan2(z, p*(1 - e2));
+    lat0 = 0;
+    % 迭代求解
+    while abs(lat - lat0) > 1e-12
+        lat0 = lat;
+        N = a / sqrt(1 - e2*sin(lat)^2);
+        alt = p / cos(lat) - N;
+        lat = atan2(z, p*(1 - e2*(N/(N+alt))));
+    end
+    % 转为度
+    lat = rad2deg(lat);
+    lon = rad2deg(lon);
+end
+%% ========== 辅助函数：地理速度转ECEF速度 ==========
+function v_ecef = geodeticRates2ecef(lat, lon, alt, latRate, lonRate, altRate, a, e2)
+    % 将地理速率转换为ECEF速度 (m/s)
+    N = a/sqrt(1 - e2*sin(lat)^2);
+    dN_dlat = a*e2*sin(lat)*cos(lat)/( (1 - e2*sin(lat)^2)^(3/2) );
+    
+    dx_dlat = dN_dlat*cos(lat)*cos(lon) - (N+alt)*sin(lat)*cos(lon);
+    dx_dlon = -(N+alt)*cos(lat)*sin(lon);
+    dx_dalt = cos(lat)*cos(lon);
+    
+    dy_dlat = dN_dlat*cos(lat)*sin(lon) - (N+alt)*sin(lat)*sin(lon);
+    dy_dlon = (N+alt)*cos(lat)*cos(lon);
+    dy_dalt = cos(lat)*sin(lon);
+    
+    dz_dlat = (1-e2)*dN_dlat*sin(lat) + ((1-e2)*N+alt)*cos(lat);
+    dz_dlon = 0;
+    dz_dalt = sin(lat);
+    
+    vx = dx_dlat*latRate + dx_dlon*lonRate + dx_dalt*altRate;
+    vy = dy_dlat*latRate + dy_dlon*lonRate + dy_dalt*altRate;
+    vz = dz_dlat*latRate + dz_dlon*lonRate + dz_dalt*altRate;
+    v_ecef = [vx; vy; vz];
+end
+
+##### SOURCE END #####
+-->
+</body>
+</html>
